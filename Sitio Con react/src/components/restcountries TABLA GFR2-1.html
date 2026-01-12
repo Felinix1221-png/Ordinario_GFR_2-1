@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tabla de Países</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+      <span class="navbar-brand mb-0 h1">🌍 Tabla de Países</span>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+
+    <!-- Spinner de Carga -->
+    <div id="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3">Cargando datos de países...</p>
+    </div>
+
+    <!-- Tabla de Países -->
+    <div class="table-responsive">
+      <table id="countriesTable" class="table table-striped table-bordered table-hover align-middle" style="display:none;">
+        <thead class="table-dark">
+          <tr>
+            <th>Bandera</th>
+            <th>Nombre</th>
+            <th>Capital</th>
+            <th>Región</th>
+            <th>Subregión</th>
+            <th>Población</th>
+            <th>Área (km²)</th>
+            <th>Idiomas</th>
+            <th>Monedas</th>
+            <th>Fronteras</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const apiURL = "https://restcountries.com/v3.1/all?fields=name,flags,capital,region,subregion,population,area,languages,currencies,borders";
+    const table = document.getElementById("countriesTable");
+    const tbody = table.querySelector("tbody");
+    const loading = document.getElementById("loading");
+
+    fetch(apiURL)
+      .then(response => response.json())
+      .then(data => {
+        loading.style.display = "none";
+        table.style.display = "table";
+
+        data.forEach(country => {
+          const flag = country.flags?.png || "";
+          const name = country.name?.common || "N/D";
+          const capital = country.capital ? country.capital[0] : "N/D";
+          const region = country.region || "N/D";
+          const subregion = country.subregion || "N/D";
+          const population = country.population?.toLocaleString() || "N/D";
+          const area = country.area?.toLocaleString() || "N/D";
+          const languages = country.languages ? Object.values(country.languages).join(", ") : "N/D";
+          const currencies = country.currencies
+            ? Object.values(country.currencies).map(c => `${c.name} (${c.symbol})`).join(", ")
+            : "N/D";
+          const borders = country.borders ? country.borders.join(", ") : "Ninguna";
+
+          tbody.innerHTML += `
+            <tr>
+              <td><img src="${flag}" alt="Bandera de ${name}" width="40"></td>
+              <td>${name}</td>
+              <td>${capital}</td>
+              <td>${region}</td>
+              <td>${subregion}</td>
+              <td>${population}</td>
+              <td>${area}</td>
+              <td>${languages}</td>
+              <td>${currencies}</td>
+              <td>${borders}</td>
+            </tr>
+          `;
+        });
+      })
+      .catch(error => {
+        loading.innerHTML = "<p class='text-danger'>Error al cargar los datos</p>";
+        console.error(error);
+      });
+  </script>
+
+</body>
+</html>

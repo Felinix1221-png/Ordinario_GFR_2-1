@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Países del Mundo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container">
+      <span class="navbar-brand mb-0 h1">🌍 Países del Mundo</span>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="container my-4">
+
+    <!-- Spinner de carga -->
+    <div id="loading" class="text-center my-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3">Cargando países...</p>
+    </div>
+
+    <!-- Tarjetas -->
+    <div id="countries" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const apiURL = "https://restcountries.com/v3.1/all?fields=name,flags,capital,currencies,languages,population";
+    const container = document.getElementById("countries");
+    const loading = document.getElementById("loading");
+
+    fetch(apiURL)
+      .then(response => response.json())
+      .then(data => {
+        loading.style.display = "none";
+
+        data.forEach(country => {
+          const name = country.name?.common || "N/A";
+          const capital = country.capital ? country.capital[0] : "No disponible";
+          const population = country.population?.toLocaleString() || "N/A";
+          const flag = country.flags?.png || "";
+          const languages = country.languages
+            ? Object.values(country.languages).join(", ")
+            : "No disponible";
+          const currencies = country.currencies
+            ? Object.values(country.currencies).map(c => c.name).join(", ")
+            : "No disponible";
+
+          container.innerHTML += `
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <img src="${flag}" class="card-img-top" alt="Bandera de ${name}">
+                <div class="card-body">
+                  <h5 class="card-title">${name}</h5>
+                  <p class="card-text">
+                    <strong>Capital:</strong> ${capital}<br>
+                    <strong>Población:</strong> ${population}<br>
+                    <strong>Idiomas:</strong> ${languages}<br>
+                    <strong>Moneda:</strong> ${currencies}
+                  </p>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      })
+      .catch(error => {
+        loading.innerHTML = "<p class='text-danger'>Error al cargar los datos</p>";
+        console.error(error);
+      });
+  </script>
+
+</body>
+</html>

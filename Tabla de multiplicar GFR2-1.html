@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tabla de multiplicar</title>
+
+  <!-- React y ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 40px;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+    }
+    ul {
+      margin-top: 15px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      list-style: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Tabla de multiplicar</h1>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function TablaMultiplicar() {
+      const [numero, setNumero] = React.useState("");
+      const [limite, setLimite] = React.useState("");
+      const [tabla, setTabla] = React.useState([]);
+
+      const generarTabla = () => {
+        if (numero <= 0 || limite <= 0) {
+          alert("Ingresa solo números positivos");
+          return;
+        }
+
+        let resultados = [];
+        for (let i = 1; i <= limite; i++) {
+          resultados.push(`${numero} x ${i} = ${numero * i}`);
+        }
+
+        setTabla(resultados);
+      };
+
+      return (
+        <div>
+          <label>Número base:</label><br />
+          <input
+            type="number"
+            value={numero}
+            onChange={(e) => setNumero(e.target.value)}
+          /><br />
+
+          <label>Límite:</label><br />
+          <input
+            type="number"
+            value={limite}
+            onChange={(e) => setLimite(e.target.value)}
+          /><br /><br />
+
+          <button onClick={generarTabla}>
+            Generar tabla
+          </button>
+
+          <ul>
+            {tabla.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<TablaMultiplicar />);
+  </script>
+
+</body>
+</html>
